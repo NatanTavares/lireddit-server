@@ -1,0 +1,30 @@
+{
+  "name": "lireddit-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.10.1",
+    "nodemon": "^2.0.13",
+    "prisma": "^3.1.1",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "watch": "tsc -W",
+    "start": "node dist/index.js",
+    "dev": "nodemon dist/index.js",
+    "devTs": "nodemon --exec ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.1.1",
+    "apollo-server-express": "^3.3.0",
+    "argon2": "^0.28.2",
+    "class-validator": "^0.13.1",
+    "express": "^4.17.1",
+    "graphql": "^15.6.0",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  }
+}
