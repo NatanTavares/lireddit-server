@@ -1,6 +1,6 @@
 import { Arg, Ctx, ID, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Field, ObjectType } from "type-graphql";
-import { MyContext } from "src/types";
+import { MyContext } from "src/types/myContext";
 
 @ObjectType({ description: "The Post model" })
 class Post {
