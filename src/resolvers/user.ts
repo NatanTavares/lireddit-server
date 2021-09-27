@@ -1,5 +1,5 @@
-import { Field, ObjectType } from "type-graphql";
-import { MyContext } from "src/types";
+import { Field, ObjectType, Query } from "type-graphql";
+import { MyContext } from "src/types/myContext";
 import argon2 from "argon2";
 import { Arg, Ctx, ID, InputType, Mutation, Resolver } from "type-graphql";
 
@@ -48,10 +48,40 @@ class UserResponse {
 
 @Resolver(User)
 export class UserResolver {
+  @Query(() => UserResponse, { nullable: true })
+  async me(@Ctx() { prisma, req }: MyContext): Promise<UserResponse> {
+    const id = req.session.userId;
+    if (!id) {
+      return {
+        errors: [
+          {
+            field: "Logged out",
+            message: "You need to be logged in to make this request",
+          },
+        ],
+      };
+    }
+
+    const user = await prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "Non-existent user",
+            message: "This user is not in our database",
+          },
+        ],
+      };
+    }
+
+    return { user };
+  }
+
   @Mutation(() => UserResponse)
   async registerUser(
     @Arg("credentials", () => ParamsRegister) credentials: ParamsRegister,
-    @Ctx() { prisma }: MyContext
+    @Ctx() { prisma, req }: MyContext
   ): Promise<UserResponse> {
     if (credentials.username.trim().length <= 2) {
       return {
@@ -84,6 +114,7 @@ export class UserResolver {
         },
       });
 
+      req.session.userId = user.id;
       return { user };
     } catch (err) {
       if (err.message.includes("Unique constraint failed")) {
@@ -112,7 +143,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("credentials", () => ParamsRegister) credentials: ParamsRegister,
-    @Ctx() { prisma }: MyContext
+    @Ctx() { prisma, req }: MyContext
   ): Promise<UserResponse> {
     const user = await prisma.user.findUnique({
       where: {
@@ -132,6 +163,8 @@ export class UserResolver {
         errors: [{ field: "password", message: "Incorrect password" }],
       };
     }
+
+    req.session.userId = user.id;
 
     return { user };
   }
