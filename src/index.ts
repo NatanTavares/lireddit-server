@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import cors from "cors";
 import redis from "redis";
 import express from "express";
 import session from "express-session";
@@ -17,6 +18,14 @@ async function main() {
 
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
+
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+
   app.use(
     session({
       name: "qid",
@@ -47,7 +56,10 @@ async function main() {
   });
 
   await apolloServer.start();
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+  });
 
   app.listen(4000, () => {
     console.log("Server started on localhost:4000");
