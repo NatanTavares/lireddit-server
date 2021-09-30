@@ -1,7 +1,8 @@
+import { Arg, Ctx, ID, InputType, Mutation, Resolver } from "type-graphql";
 import { Field, ObjectType, Query } from "type-graphql";
 import { MyContext } from "src/types/myContext";
+import { COOKIE_NAME } from "../constants";
 import argon2 from "argon2";
-import { Arg, Ctx, ID, InputType, Mutation, Resolver } from "type-graphql";
 
 @InputType()
 class ParamsRegister {
@@ -167,5 +168,17 @@ export class UserResolver {
     req.session.userId = user.id;
 
     return { user };
+  }
+
+  @Mutation(() => Boolean)
+  async logout(@Ctx() { req, res }: MyContext): Promise<Boolean> {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        if (!err) {
+          res.clearCookie(COOKIE_NAME);
+        }
+        resolve(!err);
+      })
+    );
   }
 }
