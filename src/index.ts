@@ -21,7 +21,7 @@ async function main() {
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: ["http://localhost:3000", "https://studio.apollographql.com"],
       credentials: true,
     })
   );
@@ -29,7 +29,6 @@ async function main() {
   app.use(
     session({
       name: "qid",
-      // name: "qid",
       store: new RedisStore({
         client: redisClient,
         disableTouch: true,
