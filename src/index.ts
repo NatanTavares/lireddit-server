@@ -7,8 +7,9 @@ import connectRedis from "connect-redis";
 import { buildSchema } from "type-graphql";
 import { MyContext } from "./types/myContext";
 import { PrismaClient } from "@prisma/client";
-import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
+import { PostResolver } from "./resolvers/post";
+import { COOKIE_NAME, __prod__ } from "./constants";
 import { ApolloServer } from "apollo-server-express";
 
 async function main() {
@@ -28,7 +29,7 @@ async function main() {
 
   app.use(
     session({
-      name: "qid",
+      name: COOKIE_NAME,
       store: new RedisStore({
         client: redisClient,
         disableTouch: true,
@@ -37,8 +38,7 @@ async function main() {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
         httpOnly: true,
         sameSite: "lax", //csrf
-        // secure: true // cookie only works in http
-        secure: false,
+        secure: __prod__,
       },
       saveUninitialized: false,
       secret: "kfjwelkfewlkmfçakdpifeowrnk",
