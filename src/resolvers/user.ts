@@ -28,9 +28,6 @@ class User {
   @Field({ description: "The user name" })
   username: string;
 
-  // @Field({ description: "The user password" })
-  // password: string;
-
   @Field({ description: "The timestamp of when the user was created" })
   createdAt: Date;
 

@@ -21,10 +21,11 @@ class Post {
 export class PostResolver {
   @Query(() => [Post])
   async posts(
-    @Arg("perPage", () => Int) perPage: number,
+    // @Arg("perPage", () => Int) perPage: number,
     @Ctx() { prisma }: MyContext
   ): Promise<Post[]> {
-    const posts = await prisma.post.findMany({ take: perPage });
+    // const posts = await prisma.post.findMany({ take: perPage });
+    const posts = await prisma.post.findMany();
     return posts;
   }
 
